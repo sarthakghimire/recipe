@@ -1,44 +1,38 @@
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import {
+  fetchByName,
+  fetchRandom,
+  fetchCategories,
+  fetchCountry,
+  fetchByID,
+} from "../services/api";
 
-const BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+export const useCategories = () => {
+  return useQuery(["categories"], fetchCategories);
+};
 
-export const fetchByName = async (foodName) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/search.php?s=${foodName}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch recipe");
-  }
+export const useRecipesByName = (foodName) => {
+  return useQuery(["recipes", foodName], () => fetchByName(foodName), {
+    enabled: !!foodName, // Only fetch if foodName is provided
+  });
 };
-export const fetchRandom = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/random.php`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch recipe");
-  }
+
+export const useRandomRecipe = () => {
+  return useQuery(["randomRecipe"], fetchRandom);
 };
-export const fetchCategories = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/categories.php`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch recipe");
-  }
+
+export const useRecipesByCountry = (countryName) => {
+  return useQuery(
+    ["recipesByCountry", countryName],
+    () => fetchCountry(countryName),
+    {
+      enabled: !!countryName, // Only fetch if countryName is provided
+    }
+  );
 };
-export const fetchCountry = async (countryName) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/filter.php?a=${countryName}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch recipe");
-  }
-};
-export const fetchByID = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/lookup.php?i=${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch recipe");
-  }
+
+export const useRecipeByID = (id) => {
+  return useQuery(["recipeByID", id], () => fetchByID(id), {
+    enabled: !!id, // Only fetch if id is provided
+  });
 };
